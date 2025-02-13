@@ -30,21 +30,22 @@ class AddressBook {
     }
   }
 
-  async getName(rl) {
-    return await rl.question("Enter contact name ('exit' to quit): ");
+  async getName() {
+    const rl = readline.createInterface({ input, output });
+    const answer = await rl.question("Enter contact name ('exit' to quit): ");
+    rl.close();
+    return answer;
   }
 
   async go() {
-    console.log("Hello, welcome to your Adress Book App (ABA)");
-    const rl = readline.createInterface({ input, output });
+    console.log("Hello, welcome to your Address Book App (ABA)");
 
-    let name = await this.getName(rl);
+    let name = await this.getName();
     while (name !== "exit") {
       this.addName(name);
-      name = await this.getName(rl);
+      name = await this.getName();
     }
 
-    rl.close();
     this.displayBook();
   }
 }
