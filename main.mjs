@@ -8,12 +8,12 @@ function addressBook() {
 
 class AddressBook {
   constructor() {
-    this._book = [];
+    this._book = {};
   }
 
   addName(name) {
-    if (!this._book.includes(name)) {
-      this._book.push(name);
+    if (!this._book[name]) {
+      this._book[name] = name;
     }
   }
 
@@ -25,7 +25,7 @@ class AddressBook {
     console.log("\nTEST: Display contents of address book");
     console.log("\nTEST: Address book contains the following contacts\n");
 
-    for (let item of this.getNames()) {
+    for (let item of Object.keys(this.getNames())) {
       console.log(item);
     }
   }
