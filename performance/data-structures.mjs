@@ -1,34 +1,36 @@
-function randomLetter() {
+function randomChar() {
   return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
 }
 
-function randomName(callback) {
-  let name = "";
-  const randomLength = Math.floor(Math.random() * 4) + 3;
-  const lookable = Math.random() < 0.05;
+function randomSKU(callback) {
+  let sku = "";
+  const randomLength = Math.floor(Math.random() * 4) + 8;
 
   for (let i = 0; i < randomLength; i++) {
-    name = name + randomLetter();
+    sku = sku + randomChar();
   }
 
-  if (lookable) {
-    callback(name);
-  }
-
-  return name;
+  callback(sku);
+  return sku;
 }
 
-const lookupNames = [];
-function addLookupName(name) {
-  let newName = name;
+const lookupItems = [];
+function addLookupItem(sku) {
+  const lookable = Math.random() < 0.05;
+
+  if (!lookable) {
+    return;
+  }
+
+  let newSku = sku;
   const noisable = Math.random() < 0.2;
 
   if (noisable) {
-    newName = newName + "*";
+    newSku = newSku + "*";
   }
 
-  if (!lookupNames.includes(newName)) {
-    lookupNames.push(newName);
+  if (!lookupItems.includes(newSku)) {
+    lookupItems.push(newSku);
   }
 }
 
@@ -43,33 +45,34 @@ function timer(processName) {
 
 // -----------------------------Arrays
 
-// const arrayNames = [];
+// const arrayItems = [];
 // for (let i = 0; i < 1000000; i++) {
-//   const name = randomName(addLookupName);
-//   arrayNames.push(name);
+//   const item = randomSKU(addLookupItem);
+//   arrayItems.push(item);
 // }
 
-function arraySearch() {
-  timer("array");
-  for (let name of lookupNames) {
-    arrayNames.includes(name);
-  }
-}
+// function arraySearch() {
+//   timer("array");
+//   for (let item of lookupItems) {
+//     arrayItems.includes(item);
+//   }
+// }
+
+// arraySearch();
 
 // --------------------------------Objects
 
-const objectNames = {};
+const objectItems = {};
 for (let i = 0; i < 1000000; i++) {
-  const name = randomName(addLookupName);
-  objectNames[name] = name;
+  const item = randomSKU(addLookupItem);
+  objectItems[item] = item;
 }
 
 function objectSearch() {
   timer("object");
-  for (let name of lookupNames) {
-    objectNames.hasOwnProperty[name];
+  for (let item of lookupItems) {
+    objectItems.hasOwnProperty(item);
   }
 }
 
-// arraySearch();
 objectSearch();
