@@ -9,6 +9,8 @@ function addressBook() {
 class AddressBook {
   constructor() {
     this._book = {};
+    this._NAME_PATTERN = "^[a-zA-Z ]*$";
+    this._PHONE_PATTERN = "^[0-9]*$";
   }
 
   async go() {
@@ -27,6 +29,14 @@ class AddressBook {
   }
 
   addContact(name, phone, email) {
+    if (!this.isValid(this._NAME_PATTERN, name)) {
+      return;
+    }
+
+    if (this.isValid(this._PHONE_PATTERN, phone)) {
+      return;
+    }
+
     if (!this._book[name]) {
       this._book[name] = { phone, email };
     }
@@ -43,13 +53,18 @@ class AddressBook {
     return answer;
   }
 
+  isValid(pattern, value) {
+    const regex = new RegExp(pattern);
+    return regex.test(value);
+  }
+
   async getName(prompt) {
     let name = "";
     let again = true;
 
     while (again) {
-      const regex = new RegExp("^[a-zA-Z ]*$");
       name = await this.getAnswer(prompt);
+      name = name.trim();
 
       if (name.length === 0) {
         console.error(
@@ -58,7 +73,7 @@ class AddressBook {
         continue;
       }
 
-      if (!regex.test(name)) {
+      if (!this.isValid(this._NAME_PATTERN, name)) {
         console.error(
           "A contact name must contain only uppercase or lowercase letters and spaces"
         );
@@ -76,7 +91,6 @@ class AddressBook {
     let again = true;
 
     while (again) {
-      const regex = new RegExp("^[0-9]*$");
       phone = await this.getAnswer(prompt);
 
       if (phone.length === 0) {
@@ -84,7 +98,7 @@ class AddressBook {
         continue;
       }
 
-      if (!regex.test(phone)) {
+      if (!this.isValid(this._PHONE_PATTERN, phone)) {
         console.error("A contact phone must contain only numbers");
         continue;
       }
@@ -101,12 +115,16 @@ class AddressBook {
 
     const book = this.getAllContacts();
     const names = Object.keys(book);
-    names.sort();
 
-    for (let name of names) {
-      console.log(`${name}: 
-        phone: ${this._book[name].phone}
-        email: ${this._book[name].email}`);
+    if (names.length === 0) {
+      console.log("No entries in address book");
+    } else {
+      names.sort();
+      for (let name of names) {
+        console.log(`${name}: 
+          phone: ${this._book[name].phone}
+          email: ${this._book[name].email}`);
+      }
     }
   }
 }
