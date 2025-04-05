@@ -33,7 +33,7 @@ class AddressBook {
       return;
     }
 
-    if (this.isValid(this._PHONE_PATTERN, phone)) {
+    if (!this.isValid(this._PHONE_PATTERN, phone)) {
       return;
     }
 
@@ -121,9 +121,16 @@ class AddressBook {
     } else {
       names.sort();
       for (let name of names) {
-        console.log(`${name}: 
-          phone: ${this._book[name].phone}
-          email: ${this._book[name].email}`);
+        if (
+          !this.isValid(this._NAME_PATTERN, name) ||
+          !this.isValid(this._PHONE_PATTERN, this._book[name].phone)
+        ) {
+          console.log(`["Invalid Name"]: ["Invalid Contact"]`);
+        } else {
+          console.log(`${name}: 
+            phone: ${this._book[name].phone}
+            email: ${this._book[name].email}`);
+        }
       }
     }
   }
