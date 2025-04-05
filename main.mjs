@@ -13,19 +13,44 @@ class AddressBook {
     this._PHONE_PATTERN = "^[0-9]*$";
   }
 
+  getBook() {
+    return this._book;
+  }
+
   async go() {
     console.log("Hello, welcome to your Address Book App (ABA)");
 
-    let name = await this.getName("Enter contact name ('exit' to quit): ");
+    const nameQuestion = {
+      prompt: "Enter contact name ('exit' to quit): ",
+      minLength: 1,
+      pattern: this._NAME_PATTERN,
+      errMessage:
+        "A contact name must contain only uppercase or lowercase letters and spaces",
+    };
+
+    const phoneQuestion = {
+      prompt: "Enter phone number: ",
+      minLength: 1,
+      pattern: this._PHONE_PATTERN,
+      errMessage: "A contact phone must contain only numbers",
+    };
+
+    let name = await this.getValidatedAnswer(nameQuestion);
+
     while (name !== "exit") {
-      const phone = await this.getPhone(`Enter phone number for ${name}: `);
+      const phone = await this.getValidatedAnswer(phoneQuestion);
       const email = await this.getAnswer(`Enter email for ${name}: `);
       this.addContact(name, phone, email);
 
-      name = await this.getName("Enter contact name ('exit' to quit): ");
+      name = await this.getValidatedAnswer(nameQuestion);
     }
 
     this.displayBook();
+  }
+
+  isValid(pattern, value) {
+    const regex = new RegExp(pattern);
+    return regex.test(value);
   }
 
   addContact(name, phone, email) {
@@ -42,10 +67,6 @@ class AddressBook {
     }
   }
 
-  getAllContacts() {
-    return this._book;
-  }
-
   async getAnswer(prompt) {
     const rl = readline.createInterface({ input, output });
     const answer = await rl.question(prompt);
@@ -53,71 +74,43 @@ class AddressBook {
     return answer;
   }
 
-  isValid(pattern, value) {
-    const regex = new RegExp(pattern);
-    return regex.test(value);
-  }
-
-  async getName(prompt) {
-    let name = "";
+  async getValidatedAnswer(props) {
+    const { prompt, minLength, pattern, errMessage } = props;
+    let answer = "";
     let again = true;
 
     while (again) {
-      name = await this.getAnswer(prompt);
-      name = name.trim();
+      answer = await this.getAnswer(prompt);
+      answer = answer.trim();
 
-      if (name.length === 0) {
+      if (answer.length < minLength) {
         console.error(
-          "A contact name must contain at least one uppercase or lowercase letter"
+          `Invalid: your answer your be at least ${minLength} characters long`
         );
         continue;
       }
 
-      if (!this.isValid(this._NAME_PATTERN, name)) {
-        console.error(
-          "A contact name must contain only uppercase or lowercase letters and spaces"
-        );
+      if (!this.isValid(pattern, answer)) {
+        console.error(errMessage);
         continue;
       }
 
       again = false;
     }
 
-    return name;
-  }
-
-  async getPhone(prompt) {
-    let phone = "";
-    let again = true;
-
-    while (again) {
-      phone = await this.getAnswer(prompt);
-
-      if (phone.length === 0) {
-        console.error("A contact phone must contain at least one number");
-        continue;
-      }
-
-      if (!this.isValid(this._PHONE_PATTERN, phone)) {
-        console.error("A contact phone must contain only numbers");
-        continue;
-      }
-
-      again = false;
-    }
-
-    return phone;
+    return answer;
   }
 
   displayBook() {
     console.log("\nTEST: Display contents of address book");
     console.log("\nTEST: Address book contains the following contacts\n");
 
-    const book = this.getAllContacts();
+    const book = this.getBook();
     const names = Object.keys(book);
 
     if (names.length === 0) {
       console.log("No entries in address book");
+      return;
     } else {
       names.sort();
       for (let name of names) {
@@ -132,6 +125,7 @@ class AddressBook {
             email: ${this._book[name].email}`);
         }
       }
+      return;
     }
   }
 }
