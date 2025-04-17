@@ -1,5 +1,5 @@
-import { View } from "./View.mjs";
-import { Model } from "./Model.mjs";
+import { View } from "../View/View.mjs";
+import { Model } from "../Model/Model.mjs";
 
 class Controller {
   constructor() {
