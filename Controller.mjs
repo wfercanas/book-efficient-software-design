@@ -76,7 +76,7 @@ class Controller {
     this._view.print("\nTEST: Display contents of address book");
     this._view.print("\nTEST: Address book contains the following contacts\n");
 
-    const names = Object.keys(this._model.getBook());
+    const names = this._model.getAllNames();
 
     if (names.length === 0) {
       this._view.print("No entries in address book");

@@ -12,8 +12,8 @@ class Model {
     }
   }
 
-  getBook() {
-    return this._book;
+  getAllNames() {
+    return Object.keys(this._book);
   }
 
   getContact(name) {
