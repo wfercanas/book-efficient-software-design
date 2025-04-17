@@ -31,8 +31,8 @@ class View {
       names.sort();
       for (let name of names) {
         console.log(`${name}: 
-            phone: ${book[name].phone}
-            email: ${book[name].email}`);
+            phone: ${book[name].getPhone()}
+            email: ${book[name].getEmail()}`);
       }
       return;
     }
