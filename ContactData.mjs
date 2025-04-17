@@ -1,7 +1,12 @@
 class ContactData {
-  constructor(phone, email) {
+  constructor(name, phone, email) {
+    this._name = name;
     this._phone = phone;
     this._email = email;
+  }
+
+  getName() {
+    return this._name;
   }
 
   getPhone() {
