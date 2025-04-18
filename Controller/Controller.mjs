@@ -50,6 +50,8 @@ class Controller {
           this.validateAnswer(newContact.getPhone(), phoneValidations)
         );
 
+        console.log(tests);
+
         const passed = tests.filter((result) => result === true);
         if (passed.length === tests.length) {
           this._model.addContact(newContact);
@@ -69,7 +71,7 @@ class Controller {
     return regex.test(value);
   }
 
-  async validateAnswer(answer, validations) {
+  validateAnswer(answer, validations) {
     const { minLength, pattern } = validations;
 
     if (answer.length < minLength.value) {
