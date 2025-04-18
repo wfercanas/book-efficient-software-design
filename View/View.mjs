@@ -21,8 +21,12 @@ class View {
     }
   }
 
-  print(message) {
+  log(message) {
     this._displayData.print(message);
+  }
+
+  error(message) {
+    this._displayData.print(`❌: ${message}`);
   }
 }
 

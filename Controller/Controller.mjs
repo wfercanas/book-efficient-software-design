@@ -12,7 +12,7 @@ class Controller {
   }
 
   async go() {
-    this._view.print("Hello, welcome to your Address Book App (ABA)");
+    this._view.log("Hello, welcome to your Address Book App (ABA)");
 
     const nameValidations = {
       property: "name",
@@ -50,8 +50,6 @@ class Controller {
           this.validateAnswer(newContact.getPhone(), phoneValidations)
         );
 
-        console.log(tests);
-
         const passed = tests.filter((result) => result === true);
         if (passed.length === tests.length) {
           this._model.addContact(newContact);
@@ -75,12 +73,12 @@ class Controller {
     const { minLength, pattern } = validations;
 
     if (answer.length < minLength.value) {
-      this._view.print(minLength.errMessage);
+      this._view.error(minLength.errMessage);
       return false;
     }
 
     if (!this.isValid(pattern.value, answer)) {
-      this._view.print(pattern.errMessage);
+      this._view.error(pattern.errMessage);
       return false;
     }
 
@@ -88,19 +86,19 @@ class Controller {
   }
 
   displayBook() {
-    this._view.print("\nTEST: Display contents of address book");
-    this._view.print("\nTEST: Address book contains the following contacts\n");
+    this._view.log("\nTEST: Display contents of address book");
+    this._view.log("\nTEST: Address book contains the following contacts\n");
 
     const names = this._model.getAllNames();
 
     if (names.length === 0) {
-      this._view.print("No entries in address book");
+      this._view.log("No entries in address book");
       return;
     } else {
       names.sort();
       for (let name of names) {
         const contact = this._model.getContact(name);
-        this._view.print(`${name}:
+        this._view.log(`${name}:
             name: ${contact.name} 
             phone: ${contact.phone}
             email: ${contact.email}`);
