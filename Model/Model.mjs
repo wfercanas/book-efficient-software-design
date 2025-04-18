@@ -5,10 +5,12 @@ class Model {
     this._book = {};
   }
 
-  addContact(name, phone, email) {
-    const data = new ContactData(name, phone, email);
-    if (!this._book[name]) {
-      this._book[name] = data;
+  addContact(newContact) {
+    if (newContact instanceof ContactData) {
+      const name = newContact.getName();
+      if (!this._book[name]) {
+        this._book[name] = newContact;
+      }
     }
   }
 

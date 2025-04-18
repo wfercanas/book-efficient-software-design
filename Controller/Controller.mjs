@@ -1,5 +1,7 @@
 import { View } from "../View/View.mjs";
 import { Model } from "../Model/Model.mjs";
+import { ContactData } from "../Model/ContactData.mjs";
+import test from "node:test";
 
 class Controller {
   constructor() {
@@ -12,29 +14,51 @@ class Controller {
   async go() {
     this._view.print("Hello, welcome to your Address Book App (ABA)");
 
-    const nameQuestion = {
-      prompt: "Enter contact name ('exit' to quit): ",
-      minLength: 1,
-      pattern: this._NAME_PATTERN,
-      errMessage:
-        "A contact name must contain only uppercase or lowercase letters and spaces",
+    const nameValidations = {
+      property: "name",
+      minLength: {
+        value: 1,
+        errMessage: "\tInvalid: a name must be at least 1 character long",
+      },
+      pattern: {
+        value: this._NAME_PATTERN,
+        errMessage:
+          "\tInvalid: A contact name must contain only uppercase or lowercase letters and spaces",
+      },
     };
 
-    const phoneQuestion = {
-      prompt: "Enter phone number: ",
-      minLength: 1,
-      pattern: this._PHONE_PATTERN,
-      errMessage: "A contact phone must contain only numbers",
+    const phoneValidations = {
+      property: "phone",
+      minLength: {
+        value: 1,
+        errMessage: `\tInvalid: a phone number must be at least 1 character long`,
+      },
+      pattern: {
+        value: this._PHONE_PATTERN,
+        errMessage: "\tInvalid: a phone must contain only numbers",
+      },
     };
 
-    let name = await this.getValidatedAnswer(nameQuestion);
+    let again = true;
+    while (again) {
+      const newContact = await this._view.getNewContact();
 
-    while (name !== "exit") {
-      const phone = await this.getValidatedAnswer(phoneQuestion);
-      const email = await this._view.getAnswer(`Enter email for ${name}: `);
-      this._model.addContact(name, phone, email);
+      if (newContact instanceof ContactData) {
+        let tests = [];
+        tests.push(this.validateAnswer(newContact.getName(), nameValidations));
+        tests.push(
+          this.validateAnswer(newContact.getPhone(), phoneValidations)
+        );
 
-      name = await this.getValidatedAnswer(nameQuestion);
+        const passed = tests.filter((result) => result === true);
+        if (passed.length === tests.length) {
+          this._model.addContact(newContact);
+        }
+      }
+
+      if (!newContact) {
+        again = false;
+      }
     }
 
     this.displayBook();
@@ -45,31 +69,20 @@ class Controller {
     return regex.test(value);
   }
 
-  async getValidatedAnswer(props) {
-    const { prompt, minLength, pattern, errMessage } = props;
-    let answer = "";
-    let again = true;
+  async validateAnswer(answer, validations) {
+    const { minLength, pattern } = validations;
 
-    while (again) {
-      answer = await this._view.getAnswer(prompt);
-      answer = answer.trim();
-
-      if (answer.length < minLength) {
-        console.error(
-          `Invalid: your answer your be at least ${minLength} characters long`
-        );
-        continue;
-      }
-
-      if (!this.isValid(pattern, answer)) {
-        console.error(errMessage);
-        continue;
-      }
-
-      again = false;
+    if (answer.length < minLength.value) {
+      this._view.print(minLength.errMessage);
+      return false;
     }
 
-    return answer;
+    if (!this.isValid(pattern.value, answer)) {
+      this._view.print(pattern.errMessage);
+      return false;
+    }
+
+    return true;
   }
 
   displayBook() {
