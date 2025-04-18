@@ -1,9 +1,11 @@
 import { ContactData } from "../Model/ContactData.mjs";
+import { DisplayData } from "./DisplayData.mjs";
 import { GetData } from "./GetData.mjs";
 
 class View {
   constructor() {
     this._getData = new GetData();
+    this._displayData = new DisplayData();
   }
 
   async getNewContact() {
@@ -20,7 +22,7 @@ class View {
   }
 
   print(message) {
-    console.log(message);
+    this._displayData.print(message);
   }
 }
 
